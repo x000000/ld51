@@ -224,8 +224,7 @@ namespace x0.ld51
 
                 TimerLabel.text = (10 - ++_ticks % 10).ToString();
                 if (_ticks % 10 == 0) {
-                    _freeze = true;
-                    ApplyEffect().ContinueWith(t => _freeze = false);
+                    _ = ApplyEffect();
                 }
             }
         }
@@ -452,10 +451,14 @@ namespace x0.ld51
 
         private async Task ApplyEffect()
         {
+            _freeze = true;
+
             bool result;
             do {
                 result = await Effects.GetRandom().Apply(this);
             } while (!result);
+
+            _freeze = false;
         }
 
         private enum InvalidReason
