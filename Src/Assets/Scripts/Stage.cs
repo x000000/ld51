@@ -25,6 +25,7 @@ namespace x0.ld51
         public TMP_Text ScoreLabel;
         public GameObject StartButton;
         public GameObject RestartButton;
+        public VolumeControl VolumeControl;
 
         public Transform[,] Grid { get; private set; } = new Transform[0, 0];
         public Shape Shape { get; private set; }
@@ -81,6 +82,8 @@ namespace x0.ld51
             StartButton.SetActive(false);
             RestartButton.SetActive(false);
 
+            if (Grid.Length == 0) VolumeControl.Play();
+
             foreach (var block in Grid) if (block != null) Destroy(block.gameObject);
             foreach (var block in _blocks) Destroy(block.gameObject);
             foreach (var block in _nextShapeBlocks) Destroy(block.gameObject);
@@ -102,6 +105,8 @@ namespace x0.ld51
             PullNextShape();
             StartCoroutine(StartGravity());
             StartCoroutine(StartCountdown());
+
+            VolumeControl.Source.GetComponent<AudioHighPassFilter>().enabled = false;
         }
 
         private void Awake()
@@ -264,6 +269,7 @@ namespace x0.ld51
                     if (AssertShape(true) == InvalidReason.Ceiling) {
                         _gravityInterval = -1f;
                         RestartButton.SetActive(true);
+                        VolumeControl.Source.GetComponent<AudioHighPassFilter>().enabled = true;
                         break;
                     }
 
@@ -316,6 +322,7 @@ namespace x0.ld51
                 case InvalidReason.Ceiling:
                     _gravityInterval = -1f;
                     RestartButton.SetActive(true);
+                    VolumeControl.Source.GetComponent<AudioHighPassFilter>().enabled = true;
                     break;
             }
 
